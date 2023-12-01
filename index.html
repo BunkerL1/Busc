@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Busc Imagens</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      position: relative;
+      padding-bottom: 50px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #1a1a1a;
+      text-shadow: 2px 2px 4px rgba(0, 0, 255, 0.5);
+    }
+
+    #searchInput {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    #searchButton {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    #imageContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .image-container {
+      width: 23%; /* Ajuste para mostrar até 4 imagens por linha */
+      margin: 10px;
+      text-align: center;
+      border: 2px solid #1a1a1a;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      transition: transform 0.3s;
+    }
+
+    .image-container:hover {
+      transform: scale(1.05);
+    }
+
+    .image-container img {
+      max-width: 100%;
+      max-height: 150px; /* Altura máxima ajustada */
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .download-button {
+      margin-top: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .download-button:hover {
+      background-color: #45a049;
+    }
+
+    #banner {
+      width: 100%;
+      max-width: 1200px;
+      height: auto;
+    }
+
+    #footer {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+  <script async src="https://cse.google.com/cse.js?cx=a1ecfaba38d6e4058"></script>
+</head>
+
+<body>
+
+  <img id="banner" src="BANNER.png" alt="Banner">
+
+  <h1>Busc Imagens</h1>
+
+  <input type="text" id="searchInput" placeholder="Digite um termo">
+  <button id="searchButton" onclick="searchImages()">Buscar</button>
+
+  <div id="imageContainer"></div>
+
+  <div id="footer">
+    &copy; 2023 Busc Imagens. Todos os direitos reservados.
+  </div>
+
+  <script>
+    async function searchImages() {
+      const searchTerm = document.getElementById('searchInput').value;
+      const apiKey = 'AIzaSyBB1P26lArZzHZBueKWYc0m5AuamLnGIDU';
+      const searchEngineId = 'a1ecfaba38d6e4058';
+      const apiUrl = `https://www.googleapis.com/customsearch/v1?q=${searchTerm}&cx=${searchEngineId}&searchType=image&key=${apiKey}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        const imageContainer = document.getElementById('imageContainer');
+        imageContainer.innerHTML = ''; // Limpa conteúdo anterior
+
+        if (data.items && data.items.length > 0) {
+          const itemsToDisplay = data.items.slice(0, 30);
+
+          itemsToDisplay.forEach((item) => {
+            const imageUrl = item.link;
+
+            const imageContainerDiv = document.createElement('div');
+            imageContainerDiv.className = 'image-container';
+
+            const imgElement = document.createElement('img');
+            imgElement.src = imageUrl;
+            imgElement.alt = item.title;
+
+            const downloadButton = document.createElement('a');
+            downloadButton.className = 'download-button';
+            downloadButton.textContent = 'Download';
+            downloadButton.href = imageUrl;
+            downloadButton.download = true;
+
+            imageContainerDiv.appendChild(imgElement);
+            imageContainerDiv.appendChild(downloadButton);
+
+            imageContainer.appendChild(imageContainerDiv);
+          });
+        } else {
+          console.error('Nenhuma imagem encontrada para o termo:', searchTerm);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar imagens:', error);
+      }
+    }
+  </script>
+
+</body>
+
+</html>

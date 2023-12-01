@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .image {
+            margin: 10px;
+        }
+    </style>
+    <title>Image Search</title>
+</head>
+<body>
+    <h1>Image Search</h1>
+
+    <form id="search-form">
+        <label for="search-term">Search Term:</label>
+        <input type="text" id="search-term" name="search-term">
+        <button type="button" onclick="searchImages()">Search</button>
+    </form>
+
+    <div id="image-container"></div>
+
+    <script>
+        async function searchImages() {
+            const searchTerm = document.getElementById('search-term').value;
+
+            const options = {
+                method: 'GET',
+                url: 'https://rapid-porn.p.rapidapi.com/photo',
+                params: { category: searchTerm },
+                headers: {
+                    'X-RapidAPI-Key': '577ef32b51mshfc31245a333101fp1cee02jsnf752bcc6bb1b',
+                    'X-RapidAPI-Host': 'rapid-porn.p.rapidapi.com'
+                }
+            };
+
+            try {
+                const response = await axios.request(options);
+                displayImages(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function displayImages(images) {
+            const imageContainer = document.getElementById('image-container');
+            imageContainer.innerHTML = ''; // Limpa o conteúdo anterior
+
+            for (let i = 0; i < Math.min(images.length, 10); i++) {
+                const imageUrl = images[i].url;
+                const imageElement = document.createElement('img');
+                imageElement.src = imageUrl;
+                imageElement.alt = 'Image ' + (i + 1);
+
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'image';
+                imageDiv.appendChild(imageElement);
+
+                imageContainer.appendChild(imageDiv);
+            }
+        }
+    </script>
+</body>
+</html>
